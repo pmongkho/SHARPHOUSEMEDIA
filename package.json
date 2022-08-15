@@ -27,6 +27,8 @@
     "react-slick": "^0.29.0",
     "slick-carousel": "^1.8.1",
     "swiper": "^8.3.2",
+    "twilio": "^3.80.1",
+    "validatorjs": "^3.22.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

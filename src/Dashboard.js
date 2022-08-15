@@ -1,8 +1,10 @@
 import axios from "axios"
 import React, { useEffect, useState } from "react"
+import DeleteBlock from "./components/DeleteBlock"
 
 const Dashboard = () => {
 	const [customerData, setCustomerData] = useState(null)
+
 
 	useEffect(() => {
 		async function fetchData() {
@@ -20,37 +22,53 @@ const Dashboard = () => {
 				formattedData["documentId"] = key
 				formattedArray.push(formattedData)
 			})
+
 			setCustomerData(formattedArray)
 		}
 		fetchData()
 	}, [])
-	console.log(customerData)
+console.log(customerData)
+      const deleteCustomer = async () => {
+				const response = await axios.delete(
+					`http://localhost:8000/${customerData?.documentId}`
+				)
+				const success = response.status == 200
+				if (success) window.location.reload()
+                else console.log("didnt work")
+			}
+
 	return (
 		<div className="dashboard">
-
-			<table id="customers">
-				<tr>
-					<th>Last Name</th>
-					<th>First Name</th>
-					<th>Email</th>
-					<th>Phone</th>
-					<th>Zip Code</th>
-					<th>Services</th>
-				</tr>
-                {customerData?.map((item, i) => (
-				<tr>
-					<td>{item.lName}</td>
-					<td>{item.fName}</td>
-					<td>{item.email}</td>
-					<td>{item.phoneNumber}</td>
-					<td>{item.zipCode}</td>
-					<td>{item.services}</td>
-				
-				</tr>
-                ))
-                }
-	
-			</table>
+			<div className="container">
+				<table id="customers">
+					<tr>
+						<th>Created</th>
+						<th>Last Name</th>
+						<th>First Name</th>
+						<th>Email</th>
+						<th>Phone</th>
+						<th>Zip Code</th>
+						<th>Services</th>
+						<th>X</th>
+					</tr>
+					{customerData?.map((item) => (
+						<tr>
+							<td>
+								{item?.datetime}
+							</td>
+							<td>{item?.lName}</td>
+							<td>{item?.fName}</td>
+							<td>{item?.email}</td>
+							<td>{item?.phoneNumber}</td>
+							<td>{item?.zipCode}</td>
+							<td>{item?.services}</td>
+							<td>
+								<DeleteBlock documentId={item?.documentId} />
+							</td>
+						</tr>
+					))}
+				</table>
+			</div>
 		</div>
 	)
 }

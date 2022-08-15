@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import logo from "../images/SharpHouseLight.png"
 import { Link } from "react-router-dom"
 import SmartphoneIcon from "@mui/icons-material/Smartphone"
+import CallIcon from "@mui/icons-material/Call"
 
 
 const Navbar = () => {
@@ -25,20 +26,24 @@ const Navbar = () => {
 			</div>
 			<div class="dropdown">
 				<div class="dropbtn">Our Services</div>
-				
+
 				<div class="dropdown-content">
 					{serviceData.map((item) => (
-						<a href="#"><Link to="/contactform">{item}</Link></a>
+						<a href="#">
+							<Link to="/contactform">{item}</Link>
+						</a>
 					))}
-		
 				</div>
 			</div>
 			<div className="container">
 				<div className="buy">
-					Text Us!
+					<div className="text-or-call">Text or Call!</div> 
 					<div className="text-us">
 						<a href="sms:719-201-4577">
 							<SmartphoneIcon sx={{ fontSize: 50, color: "#0a4d83" }} />
+						</a>
+						<a href="tel:719-201-4577">
+							<CallIcon sx={{ fontSize: 50, color: "#0a4d83" }} />
 						</a>
 					</div>
 				</div>

@@ -4,11 +4,13 @@ import  { useNavigate  } from 'react-router-dom'
 import axios from 'axios'
 
 
+
 const ContactForm = () => {
 	const navigate = useNavigate()
 	const [permission, setPermission] = useState(null)
 
 	const [formData, setFormData] = useState({
+		datetime: new Date().toISOString(),
 		fName: "",
 		lName: "",
 		email: "",
@@ -16,6 +18,7 @@ const ContactForm = () => {
 		phoneNumber: "",
 		services: [],
 	})
+
 	const serviceData = [
 		"Business Development",
 		"Brand Creation",
@@ -26,19 +29,35 @@ const ContactForm = () => {
 		"Google SEO",
 	]
 
+	
+
 	const handleSubmit = async (e) => {
+
+
 		//dont refresh
 		e.preventDefault()
 
-		const response = await axios.post('http://localhost:8000/customers',{
-			formData
+		const response = await axios.post("http://localhost:8000/customers", {
+			formData,
 		})
 		const success = response.status === 200
 		if(success) {
 			navigate("/exitpage", { replace: true })
 		}
-		
+
+	    fetch("http://localhost:8000/api/messages", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					to: `+1${formData.phoneNumber}`,
+					body: `Hello ${formData.fName}, Thank you for signing up for the Sharp House Media free business analysis!`,
+				}),
+			})
+
 		setFormData({
+			datetime: "",
 			fName: "",
 			lName: "",
 			email: "",
@@ -59,7 +78,7 @@ const ContactForm = () => {
 		<div className="contact-form">
 			<div className="container">
 				<div className="row">
-					<form action="">
+					<form validate autocomplete="on">
 						<div className="col">
 							<input
 								type="text"
@@ -70,6 +89,8 @@ const ContactForm = () => {
 								}
 								required
 							/>
+
+	
 							<input
 								type="text"
 								value={formData.lName}
@@ -90,6 +111,7 @@ const ContactForm = () => {
 								}
 								required
 							/>
+				
 						</div>
 						<div className="col">
 							<input

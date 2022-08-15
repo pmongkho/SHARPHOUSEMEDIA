@@ -26,7 +26,7 @@ const Pricing = () => {
 							/>
 						</Link>
 					</div>
-					<div className="price">50$</div>
+					<div className="price">75$+</div>
 				</div>
 
 				<div className="row">
@@ -46,12 +46,12 @@ const Pricing = () => {
 							/>
 						</Link>
 					</div>
-					<div className="price">75$</div>
+					<div className="price">100$+</div>
 				</div>
 
 				<div className="row">
 					<div className="price-name">
-						<h1> Optimization</h1>
+						<h1>Web Development</h1>
 					</div>
 					<div className="price-logo">
 						<Link to="contactform">
@@ -65,7 +65,7 @@ const Pricing = () => {
 							/>
 						</Link>
 					</div>
-					<div className="price">100$</div>
+					<div className="price">150$+</div>
 				</div>
 			</div>
 		</div>

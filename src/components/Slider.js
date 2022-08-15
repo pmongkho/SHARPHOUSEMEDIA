@@ -39,9 +39,9 @@ const Slider = () => {
 				<SwiperSlide>
 					<Section />
 				</SwiperSlide>
-				<SwiperSlide>
+				{/* <SwiperSlide>
 					<Testimonial />
-				</SwiperSlide>
+				</SwiperSlide> */}
 
 
 			</Swiper>
