@@ -39,15 +39,27 @@ const ContactForm = () => {
 
 	//createData
 	const createCustomer = async () => {
+		//add customer
 		const customerRef = doc(collection(db, "customers"))
-
 		await setDoc(customerRef, formData)
 
+		//send text message
+		const messageRef = doc(collection(db, "messages"))
+		await setDoc(messageRef, {
+			to: `+1${formData.phone}`,
+			body: `Thank you ${formData.firstname}, for signing up for the free Sharp House Media business analysis!`,
+		})
 
+			const noticeRef = doc(collection(db, "messages"))
+			await setDoc(noticeRef, {
+				to: "+17192014577",
+				body: `${formData.firstname} ${formData.lastname} has signed up for ${formData.services.join(", ")}`,
+			})
 
 		navigate("/exitpage")
 	}
 
+	console.log(`+1${formData.phone}`)
 	const handleSubmit = async (e) => {
 		//dont refresh
 		e.preventDefault()
