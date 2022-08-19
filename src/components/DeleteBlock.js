@@ -1,20 +1,18 @@
 import axios from "axios"
+import { deleteDoc, doc } from "firebase/firestore"
 import React from 'react'
+import { db } from "../firebase"
 
-const DeleteBlock = ({ documentId }) => {
-	const deleteTicket = async (e) => {
-				e.preventDefault()
-		const response = await axios.delete(
-			`http://localhost:8000/customers/${documentId}`
-		)
-		const success = response.status == 200
-		if (success) window.location.reload()
+const DeleteBlock = ({ id }) => {
+
+	//deleteData
+	const deleteData = async () => {
+		await deleteDoc(doc(db, "customers", id))
 	}
+
 	return (
 		<div className="delete-block">
-			<div className="delete-icon" onClick={deleteTicket}>
-				❌
-			</div>
+			<div className="delete-icon" onClick={deleteData}>❌</div>
 		</div>
 	)
 }

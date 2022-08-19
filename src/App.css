@@ -19,7 +19,7 @@ a:hover {
 .container {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: space-evenly;
 }
 
 img {
@@ -458,6 +458,10 @@ h1 {
 	background-color: rgba(0, 0, 0, 0.24);
 
 } */
+
+.delete-icon:hover{
+	cursor: pointer;
+}
 
 #customers {
   font-family: Arial, Helvetica, sans-serif;

@@ -1,41 +1,37 @@
 import axios from "axios"
+import {
+	collection,
+	doc,
+	onSnapshot,
+	orderBy,
+	query,
+	updateDoc,
+} from "firebase/firestore"
 import React, { useEffect, useState } from "react"
 import DeleteBlock from "./components/DeleteBlock"
+import { db } from "./firebase"
 
 const Dashboard = () => {
-	const [customerData, setCustomerData] = useState(null)
-
+	const [customerData, setCustomerData] = useState([])
 
 	useEffect(() => {
-		async function fetchData() {
-			const response = await axios.get("http://localhost:8000/customers")
+		const q = query(
+			collection(db, "customers"),
+			// orderBy("formData.datetime", "asc")
+		)
 
-			const dataObject = response.data.data
+		//read database
+		const addData = onSnapshot(q, (snapshot) => {
+			let dataArray = []
+			snapshot.forEach((doc) => dataArray.push({ ...doc.data(), id: doc.id }))
+			setCustomerData(dataArray)
+		})
 
-			const arrayOfKeys = Object.keys(dataObject)
-			const arrayOfData = Object.keys(dataObject).map((key) => dataObject[key])
-			const formattedArray = []
-
-			//combine key and value to make a usable array
-			arrayOfKeys.forEach((key, index) => {
-				const formattedData = { ...arrayOfData[index] }
-				formattedData["documentId"] = key
-				formattedArray.push(formattedData)
-			})
-
-			setCustomerData(formattedArray)
-		}
-		fetchData()
+		return () => addData()
 	}, [])
-console.log(customerData)
-      const deleteCustomer = async () => {
-				const response = await axios.delete(
-					`http://localhost:8000/${customerData?.documentId}`
-				)
-				const success = response.status == 200
-				if (success) window.location.reload()
-                else console.log("didnt work")
-			}
+
+
+	console.log("customerData: ", customerData)
 
 	return (
 		<div className="dashboard">
@@ -51,19 +47,18 @@ console.log(customerData)
 						<th>Services</th>
 						<th>X</th>
 					</tr>
-					{customerData?.map((item) => (
-						<tr>
-							<td>
-								{item?.datetime}
-							</td>
-							<td>{item?.lName}</td>
-							<td>{item?.fName}</td>
+
+					{customerData.map((item, index) => (
+						<tr key={index}>
+							<td>{item?.datetime}</td>
+							<td>{item?.lastname}</td>
+							<td>{item?.firstname}</td>
 							<td>{item?.email}</td>
-							<td>{item?.phoneNumber}</td>
-							<td>{item?.zipCode}</td>
+							<td>{item?.phone}</td>
+							<td>{item?.zipcode}</td>
 							<td>{item?.services}</td>
 							<td>
-								<DeleteBlock documentId={item?.documentId} />
+								<DeleteBlock  id={item?.id}/>
 							</td>
 						</tr>
 					))}

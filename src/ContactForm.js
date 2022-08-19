@@ -1,21 +1,29 @@
 import { Checkbox, useCheckboxState } from "pretty-checkbox-react"
-import React, { useState } from "react"
-import  { useNavigate  } from 'react-router-dom'
-import axios from 'axios'
-
-
+import React, { useEffect, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { db } from "./firebase"
+import {
+	query,
+	collection,
+	onSnapshot,
+	addDoc,
+	setDoc,
+	doc,
+} from "firebase/firestore"
 
 const ContactForm = () => {
 	const navigate = useNavigate()
 	const [permission, setPermission] = useState(null)
+	const form = useRef()
 
+	// const form = useRef()
 	const [formData, setFormData] = useState({
 		datetime: new Date().toISOString(),
-		fName: "",
-		lName: "",
+		firstname: "",
+		lastname: "",
 		email: "",
-		zipCode: "",
-		phoneNumber: "",
+		zipcode: "",
+		phone: "",
 		services: [],
 	})
 
@@ -26,51 +34,50 @@ const ContactForm = () => {
 		"Digital Marketing/Ads",
 		"Video/Photography",
 		"Social Media/Content",
-		"Google SEO",
+		"Web Development",
 	]
 
-	
+	//createData
+	const createCustomer = async () => {
+		const customerRef = doc(collection(db, "customers"))
+
+		await setDoc(customerRef, formData)
+
+
+
+		navigate("/exitpage")
+	}
 
 	const handleSubmit = async (e) => {
-
-
 		//dont refresh
 		e.preventDefault()
 
-		const response = await axios.post("http://localhost:8000/customers", {
-			formData,
-		})
-		const success = response.status === 200
-		if(success) {
-			navigate("/exitpage", { replace: true })
-		}
+		//post to firebase
+		createCustomer()
 
-	    fetch("http://localhost:8000/api/messages", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					to: `+1${formData.phoneNumber}`,
-					body: `Hello ${formData.fName}, Thank you for signing up for the Sharp House Media free business analysis!`,
-				}),
-			})
-
+		//clear fromData
 		setFormData({
 			datetime: "",
-			fName: "",
-			lName: "",
+			firstname: "",
+			lastname: "",
 			email: "",
-			zipCode: "",
-			PhoneNumber: "",
+			zipcode: "",
+			phone: "",
 			services: [],
 		})
-		setPermission(false)		
-
-
+		//clear checkboxs
+		setPermission(false)
 	}
 
-	const handleInput = (e) => {}
+	const handleChange = (e) => {
+		const value = e.target.value
+		const name = e.target.name
+
+		setFormData((prevState) => ({
+			...prevState,
+			[name]: value,
+		}))
+	}
 
 	console.log(formData)
 
@@ -78,64 +85,54 @@ const ContactForm = () => {
 		<div className="contact-form">
 			<div className="container">
 				<div className="row">
-					<form validate autocomplete="on">
+					<form validate autocomplete="on" onSubmit={handleSubmit} ref={form}>
 						<div className="col">
 							<input
 								type="text"
-								value={formData.fName}
+								value={formData.firstname}
 								placeholder="first name"
-								onChange={(e) =>
-									setFormData({ ...formData, fName: e.target.value })
-								}
-								required
+								name="firstname"
+								onChange={handleChange}
+								required={true}
 							/>
 
-	
 							<input
 								type="text"
-								value={formData.lName}
+								value={formData.lastname}
 								placeholder="last name"
-								onChange={(e) =>
-									setFormData({ ...formData, lName: e.target.value })
-								}
-								required
+								name="lastname"
+								onChange={handleChange}
+								required={true}
 							/>
 						</div>
 						<div className="col">
 							<input
 								type="email"
 								value={formData.email}
-								placeholder="email"
-								onChange={(e) =>
-									setFormData({ ...formData, email: e.target.value })
-								}
-								required
+								placeholder="example@email.com"
+								name="email"
+								onChange={handleChange}
+								required={true}
 							/>
-				
 						</div>
 						<div className="col">
 							<input
 								type="number"
-								value={formData.zipCode}
-								placeholder="zip code"
-								onChange={(e) =>
-									setFormData({ ...formData, zipCode: e.target.value })
-								}
-								required
+								value={formData.zipcode}
+								placeholder="e.g. 66801"
+								name="zipcode"
+								onChange={handleChange}
+								required={true}
 							/>
 						</div>
 						<div className="col">
 							<input
 								type="tel"
-								value={formData.phoneNumber}
-								placeholder="phone number"
-								onChange={(e) =>
-									setFormData({
-										...formData,
-										phoneNumber: e.target.value,
-									})
-								}
-								required
+								value={formData.phone}
+								placeholder="e.g. 6203341100"
+								name="phone"
+								onChange={handleChange}
+								required={true}
 							/>
 						</div>
 						<fieldset>
@@ -155,6 +152,7 @@ const ContactForm = () => {
 											plain
 											icon={<i className="mdi mdi-close" />}
 											value={data}
+											name="services"
 											onChange={(e) => {
 												if (!formData.services.includes(e.target.value)) {
 													setFormData({
@@ -177,9 +175,14 @@ const ContactForm = () => {
 								</div>
 							))}
 						</fieldset>
-						<div className="col submit buy-btn" onClick={handleSubmit}>
+						<button
+							type="submit"
+							className="col submit buy-btn"
+							onClick={handleSubmit}
+							value="Send"
+						>
 							Submit
-						</div>
+						</button>
 					</form>
 				</div>
 			</div>
